@@ -9,7 +9,7 @@ openai.api_key = os.environ.get("OPENAI_API_KEY")
 def voice():
     try:
         user_input = request.form.get("SpeechResult", "")
-        prompt = f"L'utilisateur dit : {user_input}. Réponds comme une réceptionniste polie qui gère les appels pour un salon de coiffure appelé Harmonie."
+        prompt = f"L'utilisateur dit : {user_input}. Réponds comme une réceptionniste polie qui gère les appels pour un cabinet médical ousestquesafaitbobo."
 
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
