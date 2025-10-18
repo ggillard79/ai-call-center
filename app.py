@@ -12,13 +12,13 @@ def voice():
         prompt = f"L'utilisateur dit : {user_input}. Réponds comme une réceptionniste polie qui gère les appels pour un salon de coiffure appelé Harmonie."
 
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",  # Plus fiable que GPT-4 pour le test
+            model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": prompt}]
         )
 
         reply = response['choices'][0]['message']['content']
 
-twiml = f"""<?xml version="1.0" encoding="UTF-8"?>
+        twiml = f"""<?xml version="1.0" encoding="UTF-8"?>
 <Response>
     <Gather input="speech" action="/voice" method="POST" timeout="5">
         <Say voice="alice" language="fr-FR">{reply}</Say>
@@ -29,7 +29,6 @@ twiml = f"""<?xml version="1.0" encoding="UTF-8"?>
         return Response(twiml, mimetype='text/xml')
 
     except Exception as e:
-        # Log l'erreur dans les logs Render
         print("🔥 ERREUR GPT :", str(e))
         fallback = """<?xml version="1.0" encoding="UTF-8"?>
 <Response>
@@ -40,4 +39,3 @@ twiml = f"""<?xml version="1.0" encoding="UTF-8"?>
 @app.route("/")
 def home():
     return "Serveur IA Call Center opérationnel."
-
