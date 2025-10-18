@@ -18,9 +18,12 @@ def voice():
 
         reply = response['choices'][0]['message']['content']
 
-        twiml = f"""<?xml version="1.0" encoding="UTF-8"?>
+twiml = f"""<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <Say voice="alice" language="fr-FR">{reply}</Say>
+    <Gather input="speech" action="/voice" method="POST" timeout="5">
+        <Say voice="alice" language="fr-FR">{reply}</Say>
+    </Gather>
+    <Say voice="alice" language="fr-FR">Je n'ai pas compris. Vous pouvez rappeler plus tard.</Say>
 </Response>"""
 
         return Response(twiml, mimetype='text/xml')
