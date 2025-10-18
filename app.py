@@ -11,7 +11,7 @@ def voice():
     prompt = f"L'utilisateur dit : {user_input}. Réponds comme une réceptionniste polie qui gère les appels pour un salon de coiffure appelé Harmonie."
 
     response = openai.ChatCompletion.create(
-        model="gpt-4",
+        model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}]
     )
 
