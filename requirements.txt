@@ -1,3 +1,4 @@
-flask
+flask>=3.0.0
+gunicorn>=21.2.0
 openai>=1.52.0
-gunicorn
+werkzeug>=3.0.0
