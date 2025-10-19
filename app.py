@@ -1,10 +1,12 @@
 from flask import Flask, request, Response, send_file
-import openai
+from openai import OpenAI
 import os
 import tempfile
 
 app = Flask(__name__)
-openai.api_key = os.environ.get("OPENAI_API_KEY")
+
+# --- CONFIGURATION OPENAI ---
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 # --- UTILS TWIML ---
 def twiml_play(audio_url: str) -> str:
@@ -17,12 +19,16 @@ def generate_tts_audio(text: str) -> str:
     """Génère un MP3 avec la voix naturelle OpenAI"""
     with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tmp:
         audio_path = tmp.name
-    with openai.audio.speech.with_streaming_response.create(
+
+    # Nouvelle API TTS OpenAI
+    response = client.audio.speech.create(
         model="gpt-4o-mini-tts",
-        voice="verse",
+        voice="verse",  # alternatives : "alloy", "softy", "spark", "charlie"
         input=text
-    ) as response:
-        response.stream_to_file(audio_path)
+    )
+
+    # Sauvegarde dans un fichier temporaire
+    response.stream_to_file(audio_path)
     filename = os.path.basename(audio_path)
     return f"/audio/{filename}"
 
@@ -59,7 +65,7 @@ def voice():
 
         low = speech.lower()
 
-        # --- Reconnaissance d'intentions simples ---
+        # --- Intentions simples ---
         if any(w in low for w in ["prendre", "rendez-vous", "rdv", "nouveau"]):
             reply = "Très bien, pour quel jour souhaitez-vous votre rendez-vous ?"
             audio_url = generate_tts_audio(reply)
@@ -83,12 +89,13 @@ def voice():
             "(date, heure, nom du patient, médecin, ou motif). "
             f"\nPatient: {speech}\nSecrétaire:"
         )
-        resp = openai.ChatCompletion.create(
+
+        resp = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": prompt}]
         )
-        reply = resp["choices"][0]["message"]["content"].strip()
 
+        reply = resp.choices[0].message.content.strip()
         audio_url = generate_tts_audio(reply)
         return Response(twiml_play(audio_url), mimetype='text/xml')
 
@@ -100,4 +107,4 @@ def voice():
 
 @app.route("/")
 def home():
-    return "Serveur IA Call Center médical opérationnel (voix naturelle)."
+    return "Serveur IA Call Center médical opérationnel (voix naturelle, API OpenAI v1.x)."
