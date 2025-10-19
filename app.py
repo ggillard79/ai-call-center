@@ -3,7 +3,7 @@ import openai
 import os
 
 app = Flask(__name__)
-# --- UTILS TWIML (à coller juste après app = Flask(__name__)) ---
+# --- UTILS TWIML ---
 def twiml_say(text: str) -> str:
     return f"""<?xml version="1.0" encoding="UTF-8"?>
 <Response>
